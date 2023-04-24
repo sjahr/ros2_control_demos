@@ -54,18 +54,19 @@ hardware_interface::CallbackReturn RRBotSystemMultiInterfaceHardware::on_init(
   {
     // RRBotSystemMultiInterface has exactly 3 state interfaces
     // and 3 command interfaces on each joint
-    if (joint.command_interfaces.size() != 3)
+    if (joint.command_interfaces.size() != 4)
     {
       RCLCPP_FATAL(
         rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-        "Joint '%s' has %zu command interfaces. 3 expected.", joint.name.c_str(),
+        "Joint '%s' has %zu command interfaces. 4 expected.", joint.name.c_str(),
         joint.command_interfaces.size());
       return hardware_interface::CallbackReturn::ERROR;
     }
 
     if (!(joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION ||
           joint.command_interfaces[0].name == hardware_interface::HW_IF_VELOCITY ||
-          joint.command_interfaces[0].name == hardware_interface::HW_IF_ACCELERATION))
+          joint.command_interfaces[0].name == hardware_interface::HW_IF_ACCELERATION ||
+          joint.command_interfaces[0].name == "joint_mode"))
     {
       RCLCPP_FATAL(
         rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
@@ -124,7 +125,7 @@ RRBotSystemMultiInterfaceHardware::export_command_interfaces()
   for (std::size_t i = 0; i < info_.joints.size(); i++)
   {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      info_.joints[i].name, "mode", &hw_commands_modes_[i]));
+      info_.joints[i].name, "joint_mode", &hw_commands_modes_[i]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
       info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_positions_[i]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -331,16 +332,6 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::write(
       control_level_[i]);
   }
   // END: This part here is for exemplary purposes - Please do not copy to your production code
-
-  for (std::size_t i = 0; i < hw_commands_positions_.size(); i++)
-  {
-    // Simulate sending commands to the hardware
-    RCLCPP_INFO(
-      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-      "Got the commands pos: %.5f, vel: %.5f, acc: %.5f for joint %lu, control_lvl:%u",
-      hw_commands_positions_[i], hw_commands_velocities_[i], hw_commands_accelerations_[i], i,
-      control_level_[i]);
-  }
 
   return hardware_interface::return_type::OK;
 }
