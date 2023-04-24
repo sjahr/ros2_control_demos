@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>joint_mode_controller</name>
+  <version>3.5.0</version>
+  <description>Controller for executing joint-space trajectories on a group of joints</description>
+  <maintainer email="TODO@to.do">TODO</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>pluginlib</depend>
+  <depend>realtime_tools</depend>
+  <depend>controller_interface</depend>
+  <depend>control_msgs</depend>
+  <depend>generate_parameter_library</depend>
+  <depend>hardware_interface</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rsl</depend>
+  <depend>tl_expected</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
