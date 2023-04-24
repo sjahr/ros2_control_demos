@@ -45,6 +45,7 @@ hardware_interface::CallbackReturn RRBotSystemMultiInterfaceHardware::on_init(
   hw_states_velocities_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_accelerations_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_positions_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  hw_commands_modes_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_velocities_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_accelerations_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   control_level_.resize(info_.joints.size(), integration_level_t::POSITION);
@@ -122,6 +123,8 @@ RRBotSystemMultiInterfaceHardware::export_command_interfaces()
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (std::size_t i = 0; i < info_.joints.size(); i++)
   {
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(
+      info_.joints[i].name, "mode", &hw_commands_modes_[i]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
       info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_positions_[i]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -228,6 +231,10 @@ hardware_interface::CallbackReturn RRBotSystemMultiInterfaceHardware::on_activat
     {
       hw_states_accelerations_[i] = 0;
     }
+    if (std::isnan(hw_commands_modes_[i]))
+    {
+      hw_commands_modes_[i] = 0;
+    }
     if (std::isnan(hw_commands_positions_[i]))
     {
       hw_commands_positions_[i] = 0;
@@ -319,11 +326,21 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::write(
     // Simulate sending commands to the hardware
     RCLCPP_INFO(
       rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
+      "Got the commands mode: %.5f, pos: %.5f, vel: %.5f, acc: %.5f for joint %lu, control_lvl:%u",
+      hw_commands_modes_[i], hw_commands_positions_[i], hw_commands_velocities_[i], hw_commands_accelerations_[i], i,
+      control_level_[i]);
+  }
+  // END: This part here is for exemplary purposes - Please do not copy to your production code
+
+  for (std::size_t i = 0; i < hw_commands_positions_.size(); i++)
+  {
+    // Simulate sending commands to the hardware
+    RCLCPP_INFO(
+      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
       "Got the commands pos: %.5f, vel: %.5f, acc: %.5f for joint %lu, control_lvl:%u",
       hw_commands_positions_[i], hw_commands_velocities_[i], hw_commands_accelerations_[i], i,
       control_level_[i]);
   }
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
 
   return hardware_interface::return_type::OK;
 }

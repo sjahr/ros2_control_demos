@@ -78,6 +78,7 @@ private:
   double hw_slowdown_;
 
   // Store the commands for the simulated robot
+  std::vector<double> hw_commands_modes_;
   std::vector<double> hw_commands_positions_;
   std::vector<double> hw_commands_velocities_;
   std::vector<double> hw_commands_accelerations_;
