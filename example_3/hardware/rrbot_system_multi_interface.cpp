@@ -160,11 +160,18 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
       {
         new_modes.push_back(integration_level_t::ACCELERATION);
       }
+      if (key == info_.joints[i].name + "/" + "joint_mode")
+      {
+        new_modes.push_back(integration_level_t::MODE_CONFIG);
+      }
     }
   }
   // Example criteria: All joints must be given new command mode at the same time
   if (new_modes.size() != info_.joints.size())
   {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
+      "All joints must be given new command mode at the same time");
     return hardware_interface::return_type::ERROR;
   }
   // Example criteria: All joints must have the same command mode
@@ -172,6 +179,9 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
         new_modes.begin() + 1, new_modes.end(),
         [&](integration_level_t mode) { return mode == new_modes[0]; }))
   {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
+      "All joints must have the same command mode");
     return hardware_interface::return_type::ERROR;
   }
 
@@ -193,6 +203,9 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
   {
     if (control_level_[i] != integration_level_t::UNDEFINED)
     {
+      RCLCPP_ERROR(
+        rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
+        "Something else is using the joint! Abort!");
       // Something else is using the joint! Abort!
       return hardware_interface::return_type::ERROR;
     }
@@ -299,7 +312,14 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::read(
         break;
       case integration_level_t::VELOCITY:
         hw_states_accelerations_[i] = 0;
-        hw_states_velocities_[i] = hw_commands_velocities_[i];
+        if (int(hw_commands_modes_[i]) % 2 > 0)
+        {
+          hw_states_velocities_[i] = -hw_commands_velocities_[i];
+        }
+        else
+        {
+          hw_states_velocities_[i] = hw_commands_velocities_[i];
+        }
         hw_states_positions_[i] += (hw_states_velocities_[i] * period.seconds()) / hw_slowdown_;
         break;
       case integration_level_t::ACCELERATION:
@@ -307,12 +327,14 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::read(
         hw_states_velocities_[i] += (hw_states_accelerations_[i] * period.seconds()) / hw_slowdown_;
         hw_states_positions_[i] += (hw_states_velocities_[i] * period.seconds()) / hw_slowdown_;
         break;
+      case integration_level_t::MODE_CONFIG:
+        break; // Do nothing
     }
     // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-    RCLCPP_INFO(
-      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-      "Got pos: %.5f, vel: %.5f, acc: %.5f for joint %lu!", hw_states_positions_[i],
-      hw_states_velocities_[i], hw_states_accelerations_[i], i);
+    //RCLCPP_INFO(
+    //  rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
+    //  "Got pos: %.5f, vel: %.5f, acc: %.5f for joint %lu!", hw_states_positions_[i],
+    //  hw_states_velocities_[i], hw_states_accelerations_[i], i);
     // END: This part here is for exemplary purposes - Please do not copy to your production code
   }
   return hardware_interface::return_type::OK;
@@ -328,8 +350,8 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::write(
     RCLCPP_INFO(
       rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
       "Got the commands mode: %.5f, pos: %.5f, vel: %.5f, acc: %.5f for joint %lu, control_lvl:%u",
-      hw_commands_modes_[i], hw_commands_positions_[i], hw_commands_velocities_[i], hw_commands_accelerations_[i], i,
-      control_level_[i]);
+      hw_commands_modes_[i], hw_commands_positions_[i], hw_commands_velocities_[i],
+      hw_commands_accelerations_[i], i, control_level_[i]);
   }
   // END: This part here is for exemplary purposes - Please do not copy to your production code
 

@@ -28,7 +28,7 @@
 namespace joint_mode_controller
 {
 JointModeController::JointModeController()
-: controller_interface::ControllerInterface()/*,
+: controller_interface::ControllerInterface() /*,
   rt_command_ptr_(nullptr),
   joints_command_subscriber_(nullptr)*/
 {
@@ -84,8 +84,8 @@ controller_interface::CallbackReturn JointModeController::on_configure(
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::InterfaceConfiguration
-JointModeController::command_interface_configuration() const
+controller_interface::InterfaceConfiguration JointModeController::command_interface_configuration()
+  const
 {
   controller_interface::InterfaceConfiguration command_interfaces_config;
   command_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
@@ -123,6 +123,8 @@ controller_interface::CallbackReturn JointModeController::on_activate(
   // reset command buffer if a command came through callback when controller was inactive
   //rt_command_ptr_ = realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>>(nullptr);
 
+  next_mode_ += 1.0;
+
   RCLCPP_INFO(get_node()->get_logger(), "activate successful");
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -155,9 +157,9 @@ controller_interface::return_type JointModeController::update(
   //   return controller_interface::return_type::ERROR;
   // }
 
-  for (auto& interface : command_interfaces_)
+  for (auto & interface : command_interfaces_)
   {
-    interface.set_value(1.0);
+    interface.set_value(next_mode_);
   }
 
   return controller_interface::return_type::OK;

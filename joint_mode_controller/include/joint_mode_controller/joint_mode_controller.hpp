@@ -80,6 +80,8 @@ protected:
 
   std::vector<std::string> command_interface_types_;
 
+  double next_mode_ = 0.0;
+
   //using CmdType = std_msgs::msg::Float64MultiArray;
   //realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>> rt_command_ptr_;
   //rclcpp::Subscription<CmdType>::SharedPtr joints_command_subscriber_;

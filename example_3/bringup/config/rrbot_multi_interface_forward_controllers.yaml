@@ -20,6 +20,9 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+    joint_mode_controller:
+      type: joint_mode_controller/JointModeController
+
 forward_position_controller:
   ros__parameters:
     joints:
@@ -50,3 +53,10 @@ forward_illegal2_controller:
     joints:
       - joint2
     interface_name: position
+
+joint_mode_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+    interface_name: joint_mode

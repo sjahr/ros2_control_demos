@@ -93,7 +93,8 @@ private:
     UNDEFINED = 0,
     POSITION = 1,
     VELOCITY = 2,
-    ACCELERATION = 3
+    ACCELERATION = 3,
+    MODE_CONFIG = 4
   };
 
   // Active control mode for each actuator

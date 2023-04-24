@@ -44,6 +44,11 @@ target_link_libraries(joint_mode_controller PUBLIC
 )
 ament_target_dependencies(joint_mode_controller PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+# Causes the visibility macros to use dllexport rather than dllimport,
+# which is appropriate when building the dll but not consuming it.
+target_compile_definitions(joint_mode_controller PRIVATE "JOINT_MODE_CONTROLLER_BUILDING_DLL")
+pluginlib_export_plugin_description_file(controller_interface joint_mode_plugin.xml)
+
 install(
   DIRECTORY include/
   DESTINATION include/joint_mode_controller

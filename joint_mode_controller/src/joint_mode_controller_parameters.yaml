@@ -6,6 +6,6 @@ joint_mode_controller:
   }
   interface_name: {
     type: string,
-    default_value: "mode",
+    default_value: "joint_mode",
     description: "Name of the interface to command",
   }
