@@ -28,9 +28,9 @@
 namespace joint_mode_controller
 {
 JointModeController::JointModeController()
-: controller_interface::ControllerInterface() /*,
-  rt_command_ptr_(nullptr),
-  joints_command_subscriber_(nullptr)*/
+: controller_interface::ControllerInterface()
+  /* TODO(sjahr): Re-enable once an interface will be created,
+  rt_command_ptr_(nullptr)*/
 {
 }
 
@@ -76,10 +76,6 @@ controller_interface::CallbackReturn JointModeController::on_configure(
     command_interface_types_.push_back(joint + "/" + params_.interface_name);
   }
 
-  //joints_command_subscriber_ = get_node()->create_subscription<CmdType>(
-  //  "~/commands", rclcpp::SystemDefaultsQoS(),
-  //  [this](const CmdType::SharedPtr msg) { rt_command_ptr_.writeFromNonRT(msg); });
-
   RCLCPP_INFO(get_node()->get_logger(), "configure successful");
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -104,9 +100,6 @@ controller_interface::InterfaceConfiguration JointModeController::state_interfac
 controller_interface::CallbackReturn JointModeController::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  //  check if we have all resources defined in the "points" parameter
-  //  also verify that we *only* have the resources defined in the "points" parameter
-  // ATTENTION(destogl): Shouldn't we use ordered interface all the time?
   std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     ordered_interfaces;
   if (
@@ -120,6 +113,7 @@ controller_interface::CallbackReturn JointModeController::on_activate(
     return controller_interface::CallbackReturn::ERROR;
   }
 
+  // TODO(sjahr): Re-enable once an interface will be created
   // reset command buffer if a command came through callback when controller was inactive
   //rt_command_ptr_ = realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>>(nullptr);
 
@@ -140,21 +134,12 @@ controller_interface::CallbackReturn JointModeController::on_deactivate(
 controller_interface::return_type JointModeController::update(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // auto joint_commands = rt_command_ptr_.readFromRT();
+  // auto joint_mode_commands = rt_command_ptr_.readFromRT();
 
   // no command received yet
-  // if (!joint_commands || !(*joint_commands))
+  // if (!joint_mode_commands || !(*joint_mode_commands))
   // {
   //   return controller_interface::return_type::OK;
-  // }
-
-  // if ((*joint_commands)->data.size() != command_interfaces_.size())
-  // {
-  //   RCLCPP_ERROR_THROTTLE(
-  //     get_node()->get_logger(), *(get_node()->get_clock()), 1000,
-  //     "command size (%zu) does not match number of interfaces (%zu)",
-  //     (*joint_commands)->data.size(), command_interfaces_.size());
-  //   return controller_interface::return_type::ERROR;
   // }
 
   for (auto & interface : command_interfaces_)

@@ -312,6 +312,7 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::read(
         break;
       case integration_level_t::VELOCITY:
         hw_states_accelerations_[i] = 0;
+        // Determine direction of velocity command based on hw_command_modes_
         if (int(hw_commands_modes_[i]) % 2 > 0)
         {
           hw_states_velocities_[i] = -hw_commands_velocities_[i];

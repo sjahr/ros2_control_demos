@@ -25,7 +25,6 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "realtime_tools/realtime_buffer.h"
-#include "std_msgs/msg/float64_multi_array.hpp"
 
 namespace joint_mode_controller
 {
@@ -82,9 +81,7 @@ protected:
 
   double next_mode_ = 0.0;
 
-  //using CmdType = std_msgs::msg::Float64MultiArray;
-  //realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>> rt_command_ptr_;
-  //rclcpp::Subscription<CmdType>::SharedPtr joints_command_subscriber_;
+  //realtime_tools::RealtimeBuffer<std::shared_ptr<TODO>> rt_command_ptr_;
 };
 
 }  // namespace joint_mode_controller
