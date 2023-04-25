@@ -320,7 +320,7 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::read(
         hw_states_positions_[i] += (hw_states_velocities_[i] * period.seconds()) / hw_slowdown_;
         break;
       case integration_level_t::MODE_CONFIG:
-        break; // Do nothing
+        break;  // Do nothing
     }
     // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
     //RCLCPP_INFO(

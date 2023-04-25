@@ -27,9 +27,8 @@
 
 namespace joint_mode_controller
 {
-JointModeController::JointModeController()
-: controller_interface::ControllerInterface()
-  /* TODO(sjahr): Re-enable once an interface will be created,
+JointModeController::JointModeController() : controller_interface::ControllerInterface()
+/* TODO(sjahr): Re-enable once an interface will be created,
   rt_command_ptr_(nullptr)*/
 {
 }
