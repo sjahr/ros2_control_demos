@@ -169,9 +169,6 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
   // Example criteria: All joints must be given new command mode at the same time
   if (new_modes.size() != info_.joints.size())
   {
-    RCLCPP_ERROR(
-      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-      "All joints must be given new command mode at the same time");
     return hardware_interface::return_type::ERROR;
   }
   // Example criteria: All joints must have the same command mode
@@ -179,9 +176,6 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
         new_modes.begin() + 1, new_modes.end(),
         [&](integration_level_t mode) { return mode == new_modes[0]; }))
   {
-    RCLCPP_ERROR(
-      rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-      "All joints must have the same command mode");
     return hardware_interface::return_type::ERROR;
   }
 
@@ -203,9 +197,6 @@ hardware_interface::return_type RRBotSystemMultiInterfaceHardware::prepare_comma
   {
     if (control_level_[i] != integration_level_t::UNDEFINED)
     {
-      RCLCPP_ERROR(
-        rclcpp::get_logger("RRBotSystemMultiInterfaceHardware"),
-        "Something else is using the joint! Abort!");
       // Something else is using the joint! Abort!
       return hardware_interface::return_type::ERROR;
     }
